@@ -1442,7 +1442,9 @@ export default {
     api_table_not_empty: 'API data table cannot be empty',
     has_repeat_name: 'Duplicate API data table name',
     valid: 'Valid',
-    invalid: 'Invalid'
+    invalid: 'Invalid',
+    data_method: 'Data extraction method',
+    data_choice: 'Self selected'
   },
   pblink: {
     key_pwd: 'Please enter the password to open the link',

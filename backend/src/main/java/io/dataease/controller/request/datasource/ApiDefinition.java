@@ -19,4 +19,5 @@ public class ApiDefinition {
     private String dataPath;
     private String status;
     private List<Map<String,String>> datas = new ArrayList<>();
+    private String dataMethod;
 }

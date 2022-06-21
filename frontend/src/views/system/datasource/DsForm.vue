@@ -486,6 +486,7 @@ export default {
         return
       }
       this.$refs.dsForm.validate(valid => {
+        debugger
         if (valid) {
           const data = JSON.parse(JSON.stringify(this.form))
           if (data.type === 'api') {

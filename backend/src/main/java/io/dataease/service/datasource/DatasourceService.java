@@ -407,6 +407,11 @@ public class DatasourceService {
 
     public ApiDefinition checkApiDatasource(ApiDefinition apiDefinition) throws Exception {
         String response = ApiProvider.execHttpRequest(apiDefinition);
+        if(StringUtils.equalsIgnoreCase("choice",apiDefinition.getDataMethod())){
+            // 如果是自选的话，jsonpath默认为$
+            apiDefinition.setDataPath("$");
+            return ApiProvider.checkApiDefinitionForChoice(apiDefinition, response);
+        }
         return ApiProvider.checkApiDefinition(apiDefinition, response);
     }
 

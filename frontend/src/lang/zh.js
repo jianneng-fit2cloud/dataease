@@ -1450,7 +1450,9 @@ export default {
     api_table_not_empty: 'API 数据表不能为空',
     has_repeat_name: 'API 数据表名称重复',
     valid: '有效',
-    invalid: '无效'
+    invalid: '无效',
+    data_method: '提取数据方式',
+    data_choice: '自选'
   },
   pblink: {
     key_pwd: '请输入密码打开链接',

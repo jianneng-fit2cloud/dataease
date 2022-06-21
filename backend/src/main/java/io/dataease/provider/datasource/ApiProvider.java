@@ -1,5 +1,7 @@
 package io.dataease.provider.datasource;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.dataease.plugins.common.dto.datasource.TableDesc;
@@ -28,6 +30,9 @@ public class ApiProvider extends Provider {
     @Override
     public List<String[]> getData(DatasourceRequest datasourceRequest) throws Exception {
         ApiDefinition apiDefinition = checkApiDefinition(datasourceRequest);
+        if(StringUtils.equalsIgnoreCase("choice",apiDefinition.getDataMethod())){
+            apiDefinition.setDataPath("$");
+        }
         String response = execHttpRequest(apiDefinition);
         return fetchResult(response, apiDefinition);
     }
@@ -86,7 +91,15 @@ public class ApiProvider extends Provider {
         for (ApiDefinition apiDefinition : lists) {
             if (datasourceRequest.getTable().equalsIgnoreCase(apiDefinition.getName())) {
                 String response = ApiProvider.execHttpRequest(apiDefinition);
-                for (DatasetTableField field : checkApiDefinition(apiDefinition, response).getFields()) {
+                List<DatasetTableField> fields = new ArrayList<>();
+                if(StringUtils.equalsIgnoreCase("choice",apiDefinition.getDataMethod())){
+                    // 如果是自选的话，jsonpath默认为$
+                    apiDefinition.setDataPath("$");
+                    fields = checkApiDefinitionForChoice(apiDefinition, response).getFields();
+                }else{
+                    fields = checkApiDefinition(apiDefinition, response).getFields();
+                }
+                for (DatasetTableField field : fields) {
                     TableField tableField = new TableField();
                     tableField.setFieldName(field.getOriginName());
                     tableField.setRemarks(field.getName());
@@ -175,6 +188,7 @@ public class ApiProvider extends Provider {
         if (StringUtils.isEmpty(response)) {
             throw new Exception("该请求返回数据为空");
         }
+
         List<LinkedHashMap> datas = new ArrayList<>();
         try {
             Object object = JsonPath.read(response, apiDefinition.getDataPath());
@@ -265,6 +279,57 @@ public class ApiProvider extends Provider {
             }
         }
         throw new Exception("未找到API数据表");
+    }
+
+
+    static public ApiDefinition checkApiDefinitionForChoice(ApiDefinition apiDefinition, String response) throws Exception {
+        if (StringUtils.isEmpty(response)) {
+            throw new Exception("该请求返回数据为空");
+        }
+
+        List<LinkedHashMap> datas = new ArrayList<>();
+        try {
+            Object object = JsonPath.parse(response).json();
+            if (object instanceof List) {
+                datas = (List<LinkedHashMap>) object;
+            } else {
+                datas.add((LinkedHashMap) object);
+            }
+        } catch (Exception e) {
+            throw new Exception("jsonPath 路径错误：" + e.getMessage());
+        }
+
+        List<Map<String,String>> dataList = new ArrayList<>();
+        List<DatasetTableField> fields = new ArrayList<>();
+        Set<String> fieldKeys = new HashSet<>();
+        //第一遍获取 field
+        for (LinkedHashMap data : datas) {
+            Set<String> keys = data.keySet();
+            for (String key : keys) {
+                if (!fieldKeys.contains(key)) {
+                    fieldKeys.add(key);
+                    DatasetTableField tableField = new DatasetTableField();
+                    tableField.setOriginName(key);
+                    tableField.setName(key);
+                    tableField.setSize(65535);
+                    tableField.setDeExtractType(0);
+                    tableField.setDeType(0);
+                    tableField.setExtField(0);
+                    fields.add(tableField);
+                }
+            }
+        }
+        //第二遍获取 data
+        for (LinkedHashMap data : datas) {
+            Map<String,String> mapData = new HashMap<>();
+            for (String key : fieldKeys) {
+                mapData.put(key, JSONObject.toJSONString(data.get(key)));
+            }
+            dataList.add(mapData);
+        }
+        apiDefinition.setDatas(dataList);
+        apiDefinition.setFields(fields);
+        return apiDefinition;
     }
 
 }

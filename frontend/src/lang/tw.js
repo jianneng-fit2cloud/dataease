@@ -1443,7 +1443,9 @@ export default {
     api_table_not_empty: 'API 數據表不能為空',
     has_repeat_name: 'API 數據表名稱重複',
     valid: '有效',
-    invalid: '無效'
+    invalid: '無效',
+    data_method: '選取數據管道',
+    data_choice: '自選'
   },
   pblink: {
     key_pwd: '請輸入密碼打開鏈接',
