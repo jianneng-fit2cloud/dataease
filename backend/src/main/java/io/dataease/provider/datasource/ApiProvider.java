@@ -95,12 +95,6 @@ public class ApiProvider extends Provider {
         return result;
     }
 
-    public static void main(String[] args) {
-        int i = 0;
-        String s = Optional.ofNullable(i).orElse(Integer.valueOf("")).toString().replaceAll("\n", " ").replaceAll("\r", " ");
-        System.out.println(s);
-    }
-
     private List<TableField> getTableFileds(ApiDefinition apiDefinition, String response) throws Exception {
         List<TableField> tableFields = new ArrayList<>();
         List<DatasetTableField> fields = new ArrayList<>();
