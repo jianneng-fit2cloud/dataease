@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import io.dataease.plugins.common.base.domain.Datasource;
 import io.dataease.plugins.common.dto.datasource.TableDesc;
 import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.plugins.common.request.datasource.DatasourceRequest;
@@ -30,7 +31,7 @@ public class ApiProvider extends Provider {
     @Override
     public List<String[]> getData(DatasourceRequest datasourceRequest) throws Exception {
         ApiDefinition apiDefinition = checkApiDefinition(datasourceRequest);
-        if(StringUtils.equalsIgnoreCase("choice",apiDefinition.getDataMethod())){
+        if (StringUtils.equalsIgnoreCase("choice", apiDefinition.getDataMethod())) {
             apiDefinition.setDataPath("$");
         }
         String response = execHttpRequest(apiDefinition);
@@ -65,15 +66,50 @@ public class ApiProvider extends Provider {
 
         fieldList = getTableFileds(apiDefinition, response);
         result.put("fieldList", fieldList);
-        dataList = fetchResult(response, apiDefinition);
+        if (!StringUtils.equalsIgnoreCase("choice", apiDefinition.getDataMethod())) {
+            dataList = fetchResult(response, apiDefinition);
+        } else {
+            List<DatasetTableField> fields = apiDefinition.getFields();
+            String pathPrefix = "$.";
+            if (response.startsWith("[")) {
+                pathPrefix = pathPrefix + "*.";
+            }
+            Map<String, List<String>> filedsAndValues = new HashMap<>();
+            int size = 0;
+            for (DatasetTableField field : fields) {
+                List<String> object = JsonPath.read(response, pathPrefix + field.getPath());
+                size = object.size();
+                filedsAndValues.put(field.getPath(), object);
+            }
+            for (int i = 0; i < size; i++) {
+                String[] row = new String[fields.size()];
+                int j = 0;
+                for (DatasetTableField field : fields) {
+                    row[j] = String.valueOf(Optional.ofNullable(filedsAndValues.get(field.getPath()).get(i)).orElse("")).replaceAll("\n", " ").replaceAll("\r", " ");
+                    j++;
+                }
+                dataList.add(row);
+            }
+        }
         result.put("dataList", dataList);
         return result;
     }
 
+    public static void main(String[] args) {
+        int i = 0;
+        String s = Optional.ofNullable(i).orElse(Integer.valueOf("")).toString().replaceAll("\n", " ").replaceAll("\r", " ");
+        System.out.println(s);
+    }
 
     private List<TableField> getTableFileds(ApiDefinition apiDefinition, String response) throws Exception {
         List<TableField> tableFields = new ArrayList<>();
-        for (DatasetTableField field : checkApiDefinition(apiDefinition, response).getFields()) {
+        List<DatasetTableField> fields = new ArrayList<>();
+        if (StringUtils.equalsIgnoreCase("choice", apiDefinition.getDataMethod())) {
+            fields = apiDefinition.getFields();
+        } else {
+            fields = checkApiDefinition(apiDefinition, response).getFields();
+        }
+        for (DatasetTableField field : fields) {
             TableField tableField = new TableField();
             tableField.setFieldName(field.getOriginName());
             tableField.setRemarks(field.getName());
@@ -92,16 +128,19 @@ public class ApiProvider extends Provider {
             if (datasourceRequest.getTable().equalsIgnoreCase(apiDefinition.getName())) {
                 String response = ApiProvider.execHttpRequest(apiDefinition);
                 List<DatasetTableField> fields = new ArrayList<>();
-                if(StringUtils.equalsIgnoreCase("choice",apiDefinition.getDataMethod())){
+                if (StringUtils.equalsIgnoreCase("choice", apiDefinition.getDataMethod())) {
                     // 如果是自选的话，jsonpath默认为$
-                    apiDefinition.setDataPath("$");
-                    fields = checkApiDefinitionForChoice(apiDefinition, response).getFields();
-                }else{
+                    fields = apiDefinition.getFields();
+                } else {
                     fields = checkApiDefinition(apiDefinition, response).getFields();
                 }
                 for (DatasetTableField field : fields) {
                     TableField tableField = new TableField();
-                    tableField.setFieldName(field.getOriginName());
+                    if (StringUtils.equalsIgnoreCase("choice", apiDefinition.getDataMethod())) {
+                        tableField.setFieldName(field.getPath());
+                    } else {
+                        tableField.setFieldName(field.getOriginName());
+                    }
                     tableField.setRemarks(field.getName());
                     tableField.setFieldSize(field.getSize());
                     tableField.setFieldType(field.getDeExtractType().toString());
@@ -201,7 +240,7 @@ public class ApiProvider extends Provider {
             throw new Exception("jsonPath 路径错误：" + e.getMessage());
         }
 
-        List<Map<String,String>> dataList = new ArrayList<>();
+        List<Map<String, String>> dataList = new ArrayList<>();
         List<DatasetTableField> fields = new ArrayList<>();
         Set<String> fieldKeys = new HashSet<>();
         //第一遍获取 field
@@ -223,7 +262,7 @@ public class ApiProvider extends Provider {
         }
         //第二遍获取 data
         for (LinkedHashMap data : datas) {
-            Map<String,String> mapData = new HashMap<>();
+            Map<String, String> mapData = new HashMap<>();
             for (String key : fieldKeys) {
                 mapData.put(key, Optional.ofNullable(data.get(key)).orElse("").toString().replaceAll("\n", " ").replaceAll("\r", " "));
             }
@@ -258,7 +297,8 @@ public class ApiProvider extends Provider {
 
     private ApiDefinition checkApiDefinition(DatasourceRequest datasourceRequest) throws Exception {
         List<ApiDefinition> apiDefinitionList = new ArrayList<>();
-        List<ApiDefinition> apiDefinitionListTemp = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), new TypeToken<List<ApiDefinition>>() {}.getType());
+        List<ApiDefinition> apiDefinitionListTemp = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), new TypeToken<List<ApiDefinition>>() {
+        }.getType());
         if (CollectionUtils.isNotEmpty(apiDefinitionListTemp)) {
             for (ApiDefinition apiDefinition : apiDefinitionListTemp) {
                 if (apiDefinition.getName().equalsIgnoreCase(datasourceRequest.getTable())) {
@@ -299,7 +339,7 @@ public class ApiProvider extends Provider {
             throw new Exception("jsonPath 路径错误：" + e.getMessage());
         }
 
-        List<Map<String,String>> dataList = new ArrayList<>();
+        List<Map<String, String>> dataList = new ArrayList<>();
         List<DatasetTableField> fields = new ArrayList<>();
         Set<String> fieldKeys = new HashSet<>();
         //第一遍获取 field
@@ -321,7 +361,7 @@ public class ApiProvider extends Provider {
         }
         //第二遍获取 data
         for (LinkedHashMap data : datas) {
-            Map<String,String> mapData = new HashMap<>();
+            Map<String, String> mapData = new HashMap<>();
             for (String key : fieldKeys) {
                 mapData.put(key, JSONObject.toJSONString(data.get(key)));
             }

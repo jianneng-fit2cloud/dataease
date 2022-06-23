@@ -13,7 +13,7 @@
         >
           <el-form-item v-if="form.type == 'api'" :label="$t('datasource.data_table')">
             <el-col>
-              <el-button size="mini" icon="el-icon-plus" type="text" @click="addApiItem(undefined)" />
+              <el-button size="mini" icon="el-icon-plus" type="text" @click="addApiItem(undefined)"/>
               <el-table :data="form.apiConfiguration" class="my_table" max-height="300" height="300">
                 <el-table-column
                   prop="name"
@@ -46,8 +46,8 @@
 
                 <el-table-column :label="$t('dataset.operate')">
                   <template slot-scope="scope" style="float: right">
-                    <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="addApiItem(scope.row)" />
-                    <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="deleteItem(scope.row)" />
+                    <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="addApiItem(scope.row)"/>
+                    <el-button size="mini" type="danger" icon="el-icon-delete" circle @click="deleteItem(scope.row)"/>
                   </template>
                 </el-table-column>
               </el-table>
@@ -63,8 +63,8 @@
             append-to-body
           >
             <el-steps :active="active" align-center>
-              <el-step title="步骤 1" />
-              <el-step title="步骤 2" />
+              <el-step title="步骤 1"/>
+              <el-step title="步骤 2"/>
             </el-steps>
 
             <el-row v-show="active === 1">
@@ -72,7 +72,7 @@
                 <p class="tip">{{ $t('datasource.base_info') }} </p>
 
                 <el-form-item :label="$t('commons.name')" prop="name">
-                  <el-input v-model="apiItem.name" autocomplete="off" />
+                  <el-input v-model="apiItem.name" autocomplete="off"/>
                 </el-form-item>
 
                 <el-form-item :label="$t('datasource.request')" prop="url">
@@ -83,7 +83,7 @@
                     size="small"
                   >
                     <el-select slot="prepend" v-model="apiItem.method" style="width: 100px" size="small">
-                      <el-option v-for="item in reqOptions" :key="item.id" :label="item.label" :value="item.id" />
+                      <el-option v-for="item in reqOptions" :key="item.id" :label="item.label" :value="item.id"/>
                     </el-select>
                   </el-input>
                 </el-form-item>
@@ -102,8 +102,9 @@
 
                 <el-form-item :label="$t('datasource.data_path')">
                   <el-input v-model="apiItem.dataPath" class="ms-http-input" size="small" :disabled="isDisabled">
-                    <el-select slot="prepend" v-model="apiItem.dataMethod" style="width: 150px" size="small" @change="checkDataMethod">
-                      <el-option v-for="item in dataMethodOptions" :key="item.id" :label="item.label" :value="item.id" />
+                    <el-select slot="prepend" v-model="apiItem.dataMethod" style="width: 150px" size="small"
+                               @change="checkDataMethod">
+                      <el-option v-for="item in dataMethodOptions" :key="item.id" :label="item.label" :value="item.id"/>
                     </el-select>
                   </el-input>
                 </el-form-item>
@@ -121,7 +122,7 @@
                           :data="treeData"
                           show-checkbox
                           :check-strictly="true"
-                          node-key="id"
+                          node-key="path"
                           :props="defaultProps"
                           @check-change="treeCheckedChange"
                         />
@@ -138,14 +139,14 @@
                       >
                         <ux-table-column
                           v-for="field in apiItem.fields"
-                          :key="field.originName"
+                          :key="field.path"
                           min-width="200px"
                           :field="field.originName"
                           :resizable="true"
                         >
                           <template slot="header">
-                            <svg-icon v-if="field.deExtractType === 0" icon-class="field_text" class="field-icon-text" />
-                            <svg-icon v-if="field.deExtractType === 1" icon-class="field_time" class="field-icon-time" />
+                            <svg-icon v-if="field.deExtractType === 0" icon-class="field_text" class="field-icon-text"/>
+                            <svg-icon v-if="field.deExtractType === 1" icon-class="field_time" class="field-icon-time"/>
                             <svg-icon
                               v-if="field.deExtractType === 2 || field.deExtractType === 3"
                               icon-class="field_value"
@@ -167,8 +168,8 @@
             </el-row>
             <div slot="footer" class="dialog-footer">
               <el-button v-show="active === 1" :disabled="disabledNext" @click="next">{{
-                $t('fu.steps.next')
-              }}
+                  $t('fu.steps.next')
+                }}
               </el-button>
               <el-button v-show="active === 2" @click="before">{{ $t('fu.steps.prev') }}</el-button>
               <el-button v-show="active === 2" @click="saveItem">{{ $t('commons.save') }}</el-button>
@@ -180,7 +181,7 @@
             :label="$t('datasource.host')"
             prop="configuration.host"
           >
-            <el-input v-model="form.configuration.host" autocomplete="off" />
+            <el-input v-model="form.configuration.host" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item
@@ -200,7 +201,7 @@
             :label="$t('datasource.data_base')"
             prop="configuration.dataBase"
           >
-            <el-input v-model="form.configuration.dataBase" autocomplete="off" />
+            <el-input v-model="form.configuration.dataBase" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item
@@ -209,8 +210,8 @@
             prop="configuration.connectionType"
           >
             <el-radio v-model="form.configuration.connectionType" label="sid">{{
-              $t('datasource.oracle_sid')
-            }}
+                $t('datasource.oracle_sid')
+              }}
             </el-radio>
             <el-radio v-model="form.configuration.connectionType" label="serviceName">
               {{ $t('datasource.oracle_service_name') }}
@@ -235,54 +236,54 @@
             v-if="form.type === 'hive' && form.configuration.authMethod === 'kerberos'"
             :label="$t('datasource.client_principal')"
           >
-            <el-input v-model="form.configuration.username" autocomplete="off" />
+            <el-input v-model="form.configuration.username" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item
             v-if="form.type === 'hive' && form.configuration.authMethod === 'kerberos'"
             :label="$t('datasource.keytab_Key_path')"
           >
-            <el-input v-model="form.configuration.password" autocomplete="off" show-password />
+            <el-input v-model="form.configuration.password" autocomplete="off" show-password/>
             <p>
               {{ $t('datasource.kerbers_info') }}
             </p>
           </el-form-item>
 
-          <span v-if="form.type === 'hive' && form.configuration.authMethod === 'kerberos'" />
+          <span v-if="form.type === 'hive' && form.configuration.authMethod === 'kerberos'"/>
 
           <el-form-item
             v-if="form.type !== 'es' && form.type !== 'api' && form.configuration.authMethod !== 'kerberos'"
             :label="$t('datasource.user_name')"
           >
-            <el-input v-model="form.configuration.username" autocomplete="off" />
+            <el-input v-model="form.configuration.username" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item
             v-if="form.type !== 'es' && form.type !== 'api' && form.configuration.authMethod !== 'kerberos'"
             :label="$t('datasource.password')"
           >
-            <el-input v-model="form.configuration.password" autocomplete="off" show-password />
+            <el-input v-model="form.configuration.password" autocomplete="off" show-password/>
           </el-form-item>
 
           <el-form-item
             v-if="form.type ==='es'"
             :label="$t('datasource.user_name')"
           >
-            <el-input v-model="form.configuration.esUsername" autocomplete="off" />
+            <el-input v-model="form.configuration.esUsername" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item
             v-if="form.type ==='es'"
             :label="$t('datasource.password')"
           >
-            <el-input v-model="form.configuration.esPassword" autocomplete="off" show-password />
+            <el-input v-model="form.configuration.esPassword" autocomplete="off" show-password/>
           </el-form-item>
 
           <el-form-item
             v-if="form.type !=='es' && form.type!=='oracle' && form.type !== 'api'"
             :label="$t('datasource.extra_params')"
           >
-            <el-input v-model="form.configuration.extraParams" autocomplete="off" />
+            <el-input v-model="form.configuration.extraParams" autocomplete="off"/>
           </el-form-item>
 
           <el-form-item
@@ -290,15 +291,15 @@
             :label="$t('datasource.port')"
             prop="configuration.port"
           >
-            <el-input v-model="form.configuration.port" autocomplete="off" type="number" min="0" />
+            <el-input v-model="form.configuration.port" autocomplete="off" type="number" min="0"/>
           </el-form-item>
 
           <el-form-item
             v-if="form.type=='oracle' || form.type=='sqlServer' || form.type=='pg' || form.type=='redshift' || form.type=='db2'"
           >
             <el-button icon="el-icon-plus" size="mini" @click="getSchema()">{{
-              $t('datasource.get_schema')
-            }}
+                $t('datasource.get_schema')
+              }}
             </el-button>
           </el-form-item>
 
@@ -312,7 +313,7 @@
               :placeholder="$t('datasource.please_choose_schema')"
               class="select-width"
             >
-              <el-option v-for="item in schemas" :key="item" :label="item" :value="item" />
+              <el-option v-for="item in schemas" :key="item" :label="item" :value="item"/>
             </el-select>
           </el-form-item>
 
@@ -323,7 +324,7 @@
               :placeholder="$t('datasource.please_choose_charset')"
               class="select-width"
             >
-              <el-option v-for="item in datasourceType.charset" :key="item" :label="item" :value="item" />
+              <el-option v-for="item in datasourceType.charset" :key="item" :label="item" :value="item"/>
             </el-select>
           </el-form-item>
 
@@ -339,10 +340,10 @@
                 />
               </el-form-item>
               <el-form-item :label="$t('datasource.min_pool_size')" prop="configuration.minPoolSize">
-                <el-input v-model="form.configuration.minPoolSize" autocomplete="off" type="number" min="0" />
+                <el-input v-model="form.configuration.minPoolSize" autocomplete="off" type="number" min="0"/>
               </el-form-item>
               <el-form-item :label="$t('datasource.max_pool_size')" prop="configuration.maxPoolSize">
-                <el-input v-model="form.configuration.maxPoolSize" autocomplete="off" type="number" min="0" />
+                <el-input v-model="form.configuration.maxPoolSize" autocomplete="off" type="number" min="0"/>
               </el-form-item>
             </el-collapse-item>
           </el-collapse>
@@ -356,7 +357,7 @@
 <script>
 
 import i18n from '@/lang'
-import { checkApiDatasource, getSchema } from '@/api/system/datasource'
+import {checkApiDatasource, getSchema} from '@/api/system/datasource'
 import ApiHttpRequestForm from '@/views/system/datasource/ApiHttpRequestForm'
 import LayoutContent from '@/components/business/LayoutContent'
 
@@ -404,10 +405,10 @@ export default {
   data() {
     return {
       rule: {
-        name: [{ required: true, message: i18n.t('datasource.input_name'), trigger: 'blur' },
-          { min: 2, max: 25, message: i18n.t('datasource.input_limit_2_25', [2, 25]), trigger: 'blur' }],
-        desc: [{ min: 2, max: 50, message: i18n.t('datasource.input_limit_2_50'), trigger: 'blur' }],
-        type: [{ required: true, message: i18n.t('datasource.please_choose_type'), trigger: 'blur' }],
+        name: [{required: true, message: i18n.t('datasource.input_name'), trigger: 'blur'},
+          {min: 2, max: 25, message: i18n.t('datasource.input_limit_2_25', [2, 25]), trigger: 'blur'}],
+        desc: [{min: 2, max: 50, message: i18n.t('datasource.input_limit_2_50'), trigger: 'blur'}],
+        type: [{required: true, message: i18n.t('datasource.please_choose_type'), trigger: 'blur'}],
         'configuration.dataBase': [{
           required: true,
           message: i18n.t('datasource.please_input_data_base'),
@@ -428,9 +429,9 @@ export default {
           message: i18n.t('datasource.please_input_password'),
           trigger: 'blur'
         }],
-        'configuration.host': [{ required: true, message: i18n.t('datasource.please_input_host'), trigger: 'blur' }],
-        'configuration.url': [{ required: true, message: i18n.t('datasource.please_input_url'), trigger: 'blur' }],
-        'configuration.port': [{ required: true, message: i18n.t('datasource.please_input_port'), trigger: 'blur' }],
+        'configuration.host': [{required: true, message: i18n.t('datasource.please_input_host'), trigger: 'blur'}],
+        'configuration.url': [{required: true, message: i18n.t('datasource.please_input_url'), trigger: 'blur'}],
+        'configuration.port': [{required: true, message: i18n.t('datasource.please_input_port'), trigger: 'blur'}],
         'configuration.initialPoolSize': [{
           required: true,
           message: i18n.t('datasource.please_input_initial_pool_size'),
@@ -461,7 +462,7 @@ export default {
           message: i18n.t('datasource.please_input_connect_timeout'),
           trigger: 'blur'
         }],
-        'url': [{ required: true, message: i18n.t('datasource.please_input_url'), trigger: 'blur' }]
+        'url': [{required: true, message: i18n.t('datasource.please_input_url'), trigger: 'blur'}]
       },
       api_table_title: '',
       schemas: [],
@@ -503,16 +504,16 @@ export default {
         },
         fields: []
       },
-      reqOptions: [{ id: 'GET', label: 'GET' }, { id: 'POST', label: 'POST' }],
+      reqOptions: [{id: 'GET', label: 'GET'}, {id: 'POST', label: 'POST'}],
       loading: false,
-      responseData: { type: 'HTTP', responseResult: {}, subRequestResults: [] },
+      responseData: {type: 'HTTP', responseResult: {}, subRequestResults: []},
       api_step2_active_name: 'first',
       fieldTypes: [
-        { label: this.$t('dataset.text'), value: 0 },
-        { label: this.$t('dataset.time'), value: 1 },
-        { label: this.$t('dataset.value'), value: 2 },
-        { label: this.$t('dataset.value') + '(' + this.$t('dataset.float') + ')', value: 3 },
-        { label: this.$t('dataset.location'), value: 5 }
+        {label: this.$t('dataset.text'), value: 0},
+        {label: this.$t('dataset.time'), value: 1},
+        {label: this.$t('dataset.value'), value: 2},
+        {label: this.$t('dataset.value') + '(' + this.$t('dataset.float') + ')', value: 3},
+        {label: this.$t('dataset.location'), value: 5}
       ],
       height: 500,
       disabledNext: false,
@@ -525,7 +526,10 @@ export default {
           label: 'Kerberos'
         }],
       // 支持自选API返回数据字段
-      dataMethodOptions: [{ id: 'jsonpath', label: 'JsonPath' }, { id: 'choice', label: this.$t('datasource.data_choice') }],
+      dataMethodOptions: [{id: 'jsonpath', label: 'JsonPath'}, {
+        id: 'choice',
+        label: this.$t('datasource.data_choice')
+      }],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -622,7 +626,6 @@ export default {
       this.active = 0
       this.edit_api_item = false
       if (this.add_api_item) {
-        debugger
         this.form.apiConfiguration.push(this.apiItem)
       }
     },
@@ -637,9 +640,10 @@ export default {
           item.dataMethod = 'jsonpath'
         }
         if (item.dataMethod !== 'jsonpath') {
-          debugger
           this.isDisabled = true
-          item.dataPath = item.fields.map(fiele => { return fiele.id }).join(',')
+          item.dataPath = item.fields.map(fiele => {
+            return fiele.id
+          }).join(',')
         }
         this.add_api_item = false
         this.api_table_title = this.$t('datasource.edit_api_table')
@@ -688,7 +692,7 @@ export default {
       if (!data) return
       data.map((item) => {
         if (item.hasOwnProperty('children') && item.children.length > 0) {
-          item.disabled = true
+          //item.disabled = true
           this.formatData(item.children)
         }
       })
@@ -696,27 +700,65 @@ export default {
     },
     treeCheckedChange(data, isChecked) {
       if (isChecked) {
-        let has = false
-        for (let i = 0; i < this.apiItem.fields.length; i++) {
-          // eslint-disable-next-line eqeqeq
-          if (data.id == this.apiItem.fields[i].id) {
-            // eslint-disable-next-line no-const-assign
-            has = true
-            break
+        if (data.children !== null && data.children.length > 0) {
+          for (let i = 0; i < data.children.length; i++) {
+            let child = data.children[i];
+            if (child.children !== null && child.children.length > 0) {
+              this.treeCheckedChange(child, true)
+            } else {
+              this.treeCheckChangeTrue(data.children[i], false);
+            }
           }
-        }
-        this.checkedKeys.push(data.id) // id为tree的node-key属性
-        this.$refs.tree.setCheckedKeys(this.checkedKeys)
-        // this.$set(this.tableData, data.id , data.fieldData)
-        if (!has) {
-          this.apiItem.fields.push(data)
-          this.$set(this.tableData, data.id, data.fieldData)
-          this.$refs.plxTable.reloadData([this.tableData])
+          //把自己加进去，但是不放属性,仅仅表示勾选了
+          this.treeCheckChangeTrue(data, true);
+        } else {
+          this.treeCheckChangeTrue(data, false)
         }
       } else {
-        delete this.tableData[data.id]
-        this.checkedKeys = this.checkedKeys.filter(function(item) { return item !== data.id })
-        this.apiItem.fields = this.apiItem.fields.filter(function(item) { return item.id !== data.id })
+        if (data.children !== null && data.children.length > 0) {
+          for (let i = 0; i < data.children.length; i++) {
+            let child = data.children[i];
+            if (child.children !== null && child.children.length > 0) {
+              this.treeCheckedChange(child, false)
+            } else {
+              this.treeCheckChangeFalse(data.children[i], false);
+            }
+          }
+          this.treeCheckChangeFalse(data, true);
+        } else {
+          this.treeCheckChangeFalse(data, false)
+        }
+        this.$refs.tree.setCheckedKeys(this.checkedKeys)
+      }
+    },
+    treeCheckChangeTrue(data, isParent) {
+      let has = false
+      for (let i = 0; i < this.apiItem.fields.length; i++) {
+        // eslint-disable-next-line eqeqeq
+        if (data.path == this.apiItem.fields[i].path) {
+          // eslint-disable-next-line no-const-assign
+          has = true
+          break
+        }
+      }
+      this.checkedKeys.push(data.path) // id为tree的node-key属性
+      this.$refs.tree.setCheckedKeys(this.checkedKeys)
+      // this.$set(this.tableData, data.id , data.fieldData)
+      if (!has && !isParent) {
+        this.apiItem.fields.push(data)
+        this.$set(this.tableData, data.id, data.fieldData)
+        this.$refs.plxTable.reloadData([this.tableData])
+      }
+    },
+    treeCheckChangeFalse(data, isParent) {
+      delete this.tableData[data.id]
+      this.checkedKeys = this.checkedKeys.filter(function (item) {
+        return item !== data.path
+      })
+      if (!isParent) {
+        this.apiItem.fields = this.apiItem.fields.filter(function (item) {
+          return item.id !== data.id
+        })
       }
     },
     jsonDataToTreeData(jsonData) {
@@ -806,18 +848,21 @@ export default {
   float: right;
   margin-right: 45px;
 }
-.tab-pane-main{
+
+.tab-pane-main {
   display: flex;
   height: 100%;
 }
-.tab-pane-right{
+
+.tab-pane-right {
   overflow: auto;
-  float:right;
-  width:100%;
+  float: right;
+  width: 100%;
   padding: 8px;
 }
-.tab-pane-left{
-  float:left;
+
+.tab-pane-left {
+  float: left;
   overflow-y: auto;
   padding: 8px;
   width: 30%;

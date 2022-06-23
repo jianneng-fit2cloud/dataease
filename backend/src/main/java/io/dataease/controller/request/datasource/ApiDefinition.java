@@ -1,6 +1,5 @@
 package io.dataease.controller.request.datasource;
 
-import com.google.gson.JsonObject;
 import io.dataease.plugins.common.base.domain.DatasetTableField;
 import lombok.Data;
 
