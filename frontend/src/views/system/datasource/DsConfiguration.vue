@@ -644,6 +644,10 @@ export default {
           item.dataPath = item.fields.map(fiele => {
             return fiele.id
           }).join(',')
+          //设置paths数组。用于后续回显
+          item.dataPaths=item.fields.map(fiele => {
+            return fiele.path
+          });
         }
         this.add_api_item = false
         this.api_table_title = this.$t('datasource.edit_api_table')
@@ -813,10 +817,18 @@ export default {
             }
             this.jsonDataToTreeDataDG(b, bValue)
             defaultTreeData.children.push(b)
+            //设置回显
+            if(this.apiItem.dataPaths.includes(b.path)){
+              this.treeCheckChangeTrue(b, false)
+            }
           }
         }
       } else {
         defaultTreeData['fieldData'] = value
+        //设置回显
+        if(this.apiItem.dataPaths.includes(defaultTreeData.path)){
+          this.treeCheckChangeTrue(defaultTreeData, false)
+        }
       }
     }
   }
